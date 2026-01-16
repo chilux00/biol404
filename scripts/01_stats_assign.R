@@ -66,4 +66,8 @@ fertilized_block <- read_csv(file = 'data_raw/AnovaFertGrazeBlock2.csv')
     geom_point() +
     geom_smooth(method = lm, 
                 se = FALSE)
+  
+  # q10
+  ??log()
+  
 # write output
