@@ -8,6 +8,10 @@ bumpus <- read.csv("data_raw/bumpus2-1.csv")
          aes(x = Total_length_mm,
              y = length_humerus_mm)) +
     geom_point()
+
+# q2
   mean(mutated_bumpus$Total_length_mm)  # 160.0368 mm
-  
+  filter_bumpus <- group_by(bumpus,
+                            total_length_mm < mean(bumpus$Total_length_mm))
+                              
   
