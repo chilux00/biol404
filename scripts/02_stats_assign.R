@@ -45,3 +45,5 @@ bumpus <- read.csv("data_raw/bumpus2-1.csv")
   a == 4
   a = 4
   
+  # 
+  
