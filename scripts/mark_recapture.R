@@ -59,4 +59,68 @@ CI_uppera <- n_hata + 1.96 * se_na
 CI_lowera # 55.40228
 CI_uppera # 175.7977
 
+#### jolly seber section
 
+# read files
+pop_accuracy <- read_csv("data_raw/pop_inaccuracy.csv")
+pop_accuracy$exp <- as.factor(pop_accuracy$exp)
+pop_accuracy$exp <- factor(
+  pop_accuracy$exp,
+  levels = c("first", "second", "third"),
+  labels = c("First", "Second", "Third"))
+
+recruit_accuracy <- read_csv("data_raw/recruit_inaccuracy.csv")
+recruit_accuracy$exp <- as.factor(recruit_accuracy$exp)
+recruit_accuracy$inaccuracy <- as.numeric(recruit_accuracy$inaccuracy)
+# coerce to numeric to remove DIV/0 from graph
+recruit_accuracy_clean <- subset(
+  recruit_accuracy,
+  is.finite(inaccuracy) & inaccuracy != 0) # clean na values for div 0 errors
+recruit_accuracy_clean$exp <- factor(
+  recruit_accuracy_clean$exp,
+  levels = c("first", "third"),
+  labels = c("First", "Third"))
+
+survival_accuracy <- read_csv("data_raw/survival_inaccuracy.csv")
+survival_accuracy$exp <- as.factor(survival_accuracy$exp)
+survival_accuracy$exp <- factor(
+  survival_accuracy$exp,
+  levels = c("first", "second", "third"),
+  labels = c("First", "Second", "Third"))
+
+# plots
+ggplot(data = pop_accuracy, aes(x = time, 
+                                 y = inaccuracy, 
+                                 group = exp)) +
+  geom_line(aes(linetype = exp)) +
+  geom_point() +
+  theme_bw() +
+  labs(
+    x = "Time (t)",
+    y = "Inaccuracy (%)",
+    linetype = "Experiment"
+  ) # pop accuracy
+
+ggplot(data = survival_accuracy, aes(x = time, 
+                                y = inaccuracy, 
+                                group = exp)) +
+  geom_line(aes(linetype = exp)) +
+  geom_point() +
+  theme_bw() +
+  labs(
+    x = "Time (t)",
+    y = "Inaccuracy (%)",
+    linetype = "Experiment"
+  ) # survival accuracy
+
+ggplot(data = recruit_accuracy_clean, aes(x = time, 
+                                     y = inaccuracy, 
+                                     group = exp)) +
+  geom_line(aes(linetype = exp)) +
+  geom_point() +
+  theme_bw() +
+  labs(
+    x = "Time (t)",
+    y = "Inaccuracy (%)",
+    linetype = "Experiment"
+  ) # recruit accuracy
