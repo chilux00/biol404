@@ -30,6 +30,15 @@ m2 <- length(intersect(plate_mon_noNA$plate_mon,
 n_hat <- (n1 * n2) / m2 # estimate population size
 n_hat # 414.6456
 
+# area a 
+n1a <- nrow(mon_groupA) # num of mon vehicles
+n2a <- nrow(weds_groupA) # num of wed vehicles
+m2a <- length(intersect(mon_groupA$plate_mon, 
+                       weds_groupA$plate_weds)) # num recaptures
+
+n_hata <- (n1a * n2a) / m2a # estimate population size
+n_hata # 115.6
+
 # confidence interval calculation (formula from krebs)
 var_n <- (n1^2 * n2 * (n2 - m2)) / (m2^3)
 se_n  <- sqrt(var_n)
@@ -39,3 +48,15 @@ CI_upper <- n_hat + 1.96 * se_n
 
 CI_lower # 345.7152
 CI_upper # 483.576
+
+# area a
+var_na <- (n1a^2 * n2a * (n2a - m2a)) / (m2a^3)
+se_na  <- sqrt(var_na)
+
+CI_lowera <- n_hata - 1.96 * se_na
+CI_uppera <- n_hata + 1.96 * se_na
+
+CI_lowera # 55.40228
+CI_uppera # 175.7977
+
+
