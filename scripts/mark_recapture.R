@@ -96,7 +96,7 @@ ggplot(data = pop_accuracy, aes(x = time,
   geom_point() +
   theme_bw() +
   labs(
-    x = "Time (t)",
+    x = expression(Time~(italic(t))),
     y = "Inaccuracy (%)",
     linetype = "Experiment"
   ) # pop accuracy
@@ -108,7 +108,7 @@ ggplot(data = survival_accuracy, aes(x = time,
   geom_point() +
   theme_bw() +
   labs(
-    x = "Time (t)",
+    x = expression(Time~(italic(t))),
     y = "Inaccuracy (%)",
     linetype = "Experiment"
   ) # survival accuracy
@@ -120,7 +120,7 @@ ggplot(data = recruit_accuracy_clean, aes(x = time,
   geom_point() +
   theme_bw() +
   labs(
-    x = "Time (t)",
+    x = expression(Time~(italic(t))),
     y = "Inaccuracy (%)",
     linetype = "Experiment"
-  ) # recruit accuracy
+  ) # recruit accuracy (minus exp 2)
