@@ -30,11 +30,21 @@ fertilized_block <- fertilized_block %>%
 ###  Residuals  6  10.47    1.75    
   
 # q5
-  experiment1_grazing_model <- lm(growthexpt1 ~ fertexpt1 + grazing, 
-                                  data = fertilized_block)
+  experiment1_grazing_model2 <- lm(growthexpt1 ~ 
+                                     fertexpt1 + grazing + fertexpt1:
+                                     grazing,
+                                   data = fertilized_block)
+  anova(experiment1_grazing_model2)
   
-  experiment2_grazing_model <- lm(growthexpt2 ~ fertexpt2*grazing,
-                                  data = fertilized_block)
+# q8
+  random_block_model <- lmer(growthexpt2 ~ fertexpt2 + (1|block), 
+                             data = fertilized_block)
+  anova(random_block_model)
+  mixed_effects_model <- lmer(growthexpt2 ~ fertexpt2 + (fertexpt2|block),
+                              data = fertilized_block)
+  anova(mixed_effects_model)
   
+  
+
   
   
