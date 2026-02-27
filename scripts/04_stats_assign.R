@@ -29,7 +29,7 @@ summary(simple_linear)
              y = length_femur_in)) +
     geom_point()
 
-  linear.bumpus <- lm(length_humerus_in ~ length_femur_in,
+  linear.bumpus <- lm(length_femur_in ~ length_humerus_in,
                       data = bumpus)
   summary(linear.bumpus)
   par(mfrow = c(2,2))
@@ -52,7 +52,7 @@ summary(simple_linear)
     geom_smooth(method = "lm",
                 se = FALSE)
   
-  plant_linear <- lm(nutrient ~ simple_residuals,
+  plant_linear <- lm( simple_residuals~ nutrient,
                      data = fertilized_plant_res)  
   summary(plant_linear)  
 
