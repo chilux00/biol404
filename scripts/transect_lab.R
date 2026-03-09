@@ -105,63 +105,71 @@ qqline(residuals(m3))
 sumdata_plot <- sumdata %>%
   mutate(
     group_id = factor(group_id),
-    method   = factor(method, levels = c("tsquare", "ordered_distance", "variable_area")),
-    interval = ifelse(is.na(interval), upper - lower, interval)
+    method = factor(
+      method,
+      levels = c("tsquare", "ordered_distance", "variable_area"),
+      labels = c("T-square", "Ordered distance", "Variable area")
+    ),
+    interval = upper - lower
   ) %>%
   filter(is.finite(est), is.finite(time), is.finite(interval),
          est > 0, time > 0, interval > 0)
 
-#  lidar ref lines
-lidar_lines <- tibble(
-  metric = "Estimated density (trees/m^2)",
-  y = c(0.0055, 0.0061)
-)
-
-# convert to long format to facet into one plot
+# long format
 sumdata_long <- sumdata_plot %>%
   select(group_id, method, est, time, interval) %>%
   pivot_longer(cols = c(est, time, interval),
                names_to = "metric", values_to = "value") %>%
-  mutate(metric = recode(metric,
-                         est = "Estimated density (trees/m^2)",
-                         time = "Time (min)",
-                         interval = "95% CI width (trees/m^2)")
-         )
+  mutate(
+    metric = case_when(
+      metric == "est"      ~ "'Estimated density ('*trees~m^{-2}*')'",
+      metric == "interval" ~ "'95% CI width ('*trees~m^{-2}*')'",
+      metric == "time"     ~ "'Time (min)'"
+    ),
+    metric = factor(metric, levels = c(
+      "'95% CI width ('*trees~m^{-2}*')'",
+      "'Estimated density ('*trees~m^{-2}*')'",
+      "'Time (min)'"
+    ))
+  )
+
+# LiDAR  
+lidar_lines <- tibble(
+  metric = "'Estimated density ('*trees~m^{-2}*')'",
+  y = c(0.0055, 0.0061),
+  ref = "LiDAR estimate")
 
 # plot
-p_all <- ggplot(sumdata_long, aes(x = method, y = value)) +
-  geom_point(aes(colour = group_id),
-             position = position_jitter(width = 0.08, height = 0),
-             size = 2) +
-  geom_hline(data = lidar_lines,
-             aes(yintercept = y),
-             linetype = 2,
-             inherit.aes = FALSE) +
+p_final <- ggplot(sumdata_long, 
+                  aes(x = method, 
+                      y = value)) +
+  geom_point(aes(colour = group_id), size = 2) +
+  geom_hline(
+    data = lidar_lines,
+    aes(yintercept = y, 
+        linetype = ref),
+    linewidth = 0.6,
+    colour = "black",
+    inherit.aes = FALSE
+  ) +
+  scale_linetype_manual(values = c("LiDAR estimate" = "dashed")) +
   facet_wrap(~ metric, 
              scales = "free_y", 
-             nrow = 1) +
+             nrow = 1, 
+             labeller = label_parsed) +
   theme_bw() +
-  theme(legend.position = "bottom") +
-  labs(x = "Method (sampling design)",
-       y = "Response ("*trees~m^{-2}*") for density & CI width; min for time)",
-       colour = "Group")
+  theme(legend.position = "right") +
+  guides(
+    colour = guide_legend(order = 1),
+    linetype = guide_legend(order = 2)) +
+  labs(
+    x = "Method (sampling design)",
+    y = "Response value",
+    colour = "Group",
+    linetype = "Reference"
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 25, hjust = 1, vjust = 1))
 
-p_all
+p_final
 
-##########
-sumdata_long <- sumdata_plot %>%
-  select(group_id, method, est, interval, time) %>%
-  pivot_longer(cols = c(est, interval, time),
-               names_to = "metric", values_to = "value") %>%
-  mutate(metric = recode(metric,
-                         est      = "'Estimated density ('*trees~m^{-2}*')'",
-                         interval = "'95% CI width ('*trees~m^{-2}*')'",
-                         time     = "'Time (min)'"
-  ))
-
-ggplot(sumdata_long, aes(x = method, y = value, colour = group_id, group = group_id)) +
-  geom_line(alpha = 0.5) +
-  geom_point(size = 2) +
-  facet_wrap(~ metric, scales = "free_y", nrow = 1, labeller = label_parsed) +
-  theme_bw() +
-  labs(x = "Method (sampling design)", y = "Response value", colour = "Group")
