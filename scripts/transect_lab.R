@@ -92,14 +92,37 @@ sumdata$ci_width <- sumdata$upper - sumdata$lower # calculate precision
 m3<-lmer(ci_width~method+(1|group_id), data=sumdata)
 anova(m3)
 
+# normalize
+sumdata$method <- as.factor(sumdata$method)
+sumdata$group_id <- as.factor(sumdata$group_id)
+
+# log-transform precision
+m3_log <- lmer(log(ci_width) ~ method + (1 | group_id), data = sumdata)
+anova(m3_log)
+
 # check residuals
 par(mfrow=c(1,1))
 qqnorm(residuals(m1))
 qqline(residuals(m1))
 qqnorm(residuals(m2))
 qqline(residuals(m2))
-qqnorm(residuals(m3))
-qqline(residuals(m3))
+qqnorm(residuals(m3_log))
+qqline(residuals(m3_log))
+
+# put all three QQ plots side by side
+par(mfrow = c(1, 3), mar = c(4, 4, 3, 1))
+
+qqnorm(residuals(m1), main = "m1: Density Estimate")
+qqline(residuals(m1))
+
+qqnorm(residuals(m2), main = "m2: Sampling Time")
+qqline(residuals(m2))
+
+qqnorm(residuals(m3_log), main = "m3_log: log(95% CI width)")
+qqline(residuals(m3_log))
+
+# reset plotting layout
+par(mfrow = c(1, 1))
 
 # plot
 sumdata_plot <- sumdata %>%
@@ -172,4 +195,25 @@ p_final <- ggplot(sumdata_long,
     axis.text.x = element_text(angle = 25, hjust = 1, vjust = 1))
 
 p_final
+
+# tradeoff plot
+p_eff <- sumdata %>%
+  mutate(
+    method = factor(method,
+                    levels = c("tsquare", "ordered_distance", "variable_area"),
+                    labels = c("T-square", "Ordered distance", "Variable area")
+    ),
+    ci_width = upper - lower
+  ) %>%
+  ggplot(aes(x = time, y = ci_width, colour = method)) +
+  geom_point(size = 2) +
+  theme_bw() +
+  theme(legend.position = "right") +
+  labs(
+    x = "Time (min)",
+    y = expression("95% CI width ("*trees~m^{-2}*")"),
+    colour = "Method"
+  )
+
+p_eff
 
