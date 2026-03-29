@@ -109,6 +109,6 @@ species.dissim.mat <- vegdist(species.data,
            cex = 0.75, 
            air = 0.01)
   
-# q7
+
   
   
