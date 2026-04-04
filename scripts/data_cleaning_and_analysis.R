@@ -6,7 +6,7 @@ library(broom)
 library(dplyr)
 
 ## Read in data
-data <- read_csv("ubc_herbivory_simulated_dataset.csv")
+data <- read_csv("data_raw/herbivory_data.csv")
 
 ## Mutate herbivory to be numerical
 
@@ -57,16 +57,20 @@ mean_herbivory_table
 
 levels(data$type) ## Will tell us how to interpert the coefficients
 
-mod_low  <- lm(herbivory_low  ~ type + height + sampler, data = data)
+mod_low  <- lm(herbivory_low  ~ type + height + sampler, 
+               data = data)
 summary(mod_low)
 
-mod_med  <- lm(herbivory_med  ~ type + height + sampler, data = data)
+mod_med  <- lm(herbivory_med  ~ type + height + sampler, 
+               data = data)
 summary(mod_med)
 
-mod_high <- lm(herbivory_high ~ type + height + sampler, data = data)
+mod_high <- lm(herbivory_high ~ type + height + sampler, 
+               data = data)
 summary(mod_high)
 
-mod_mean <- lm(herbivory_mean ~ type + height + sampler, data = data)
+mod_mean <- lm(herbivory_mean ~ type + height + sampler, 
+               data = data)
 summary(mod_mean)
 
 ## Make a table with results
